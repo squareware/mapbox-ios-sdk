@@ -36,6 +36,8 @@
 {
 	RMMapView *mapView;
 	CAShapeLayer *shapeLayer;
+	CATextLayer *textLayer;
+	NSString *labelText;
 
 	UIColor *lineColor;
 	UIColor *fillColor;
@@ -50,6 +52,9 @@
 
 /** The circle's underlying shape layer. */
 @property (nonatomic, strong) CAShapeLayer *shapeLayer;
+
+@property (nonatomic, strong) NSString *labelText;
+@property (nonatomic, strong) CATextLayer *textLayer;
 
 /** The circle's line color. Defaults to black. */
 @property (nonatomic, strong) UIColor *lineColor;

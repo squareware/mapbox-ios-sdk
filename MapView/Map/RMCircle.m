@@ -44,6 +44,8 @@
 @implementation RMCircle
 
 @synthesize shapeLayer;
+@synthesize textLayer;
+@synthesize labelText;
 @synthesize lineColor;
 @synthesize fillColor;
 @synthesize radiusInMeters;
@@ -54,8 +56,18 @@
     if (!(self = [super init]))
         return nil;
 
+	labelText = @"30";
     shapeLayer = [CAShapeLayer new];
+	textLayer = [CATextLayer new];
+	[textLayer setFont:@"Helvetica-Bold"];
+	[textLayer setFontSize:20];
+//	[textLayer setFrame:validFrame];
+	[textLayer setString:labelText];
+	[textLayer setAlignmentMode:kCAAlignmentCenter];
+	[textLayer setForegroundColor:[[UIColor whiteColor] CGColor]];
+	[textLayer setAlignmentMode:kCAAlignmentCenter];
     [self addSublayer:shapeLayer];
+	[self addSublayer:textLayer];
 
     mapView = aMapView;
     radiusInMeters = newRadiusInMeters;
@@ -98,6 +110,8 @@
 
     CGFloat offset = floorf(-lineWidthInPixels / 2.0f) - 2;
     CGRect newBoundsRect = CGRectInset(rectangle, offset, offset);
+	
+//	NSLog(@"pixelRadius = %f animated = %d", pixelRadius, animated);
 
     [self setBounds:newBoundsRect];
 
@@ -118,13 +132,32 @@
         pathAnimation.toValue   = [NSValue valueWithPointer:newPath];
 
         [self.shapeLayer addAnimation:pathAnimation forKey:@"animatePath"];
+		
+		CABasicAnimation *fontAnimation = [CABasicAnimation animationWithKeyPath:@"fontSize"];
+		fontAnimation.duration = [CATransaction animationDuration];
+		fontAnimation.fromValue = @(self.textLayer.fontSize);
+		fontAnimation.toValue = @(pixelRadius);
+		
+		[self.textLayer addAnimation:fontAnimation forKey:@"animateFont"];
+		
+		CABasicAnimation *textFrameAnimation = [CABasicAnimation animationWithKeyPath:@"frame"];
+		textFrameAnimation.duration = [CATransaction animationDuration];
+		textFrameAnimation.fromValue = [NSValue valueWithCGRect:self.textLayer.frame];
+		textFrameAnimation.toValue = [NSValue valueWithCGRect:newBoundsRect];
+		
+		[self.textLayer addAnimation:textFrameAnimation forKey:@"animateFrame"];
     }
 
+	//Set shape
     [self.shapeLayer setPath:newPath];
     [self.shapeLayer setFillColor:[fillColor CGColor]];
     [self.shapeLayer setStrokeColor:[lineColor CGColor]];
     [self.shapeLayer setLineWidth:lineWidthInPixels];
 
+	//Set textlayer
+	self.textLayer.frame = newBoundsRect;
+	self.textLayer.fontSize = pixelRadius;
+	
     if (self.fillPatternImage)
         self.shapeLayer.fillColor = [[UIColor colorWithPatternImage:self.fillPatternImage] CGColor];
 }
@@ -201,6 +234,14 @@
     [self setPosition:position];
 
     [self updateCirclePathAnimated:animated];
+}
+
+- (void)setLabelText:(NSString *)inLabelText
+{
+	labelText = inLabelText;
+	self.textLayer.string = labelText;
+
+	[self updateCirclePathAnimated:NO];
 }
 
 @end
