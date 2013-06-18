@@ -63,6 +63,7 @@
 	[textLayer setFontSize:20];
 //	[textLayer setFrame:validFrame];
 	[textLayer setString:labelText];
+	[textLayer setAnchorPoint:CGPointMake(0.5, 0.5)];
 	[textLayer setAlignmentMode:kCAAlignmentCenter];
 	[textLayer setForegroundColor:[[UIColor whiteColor] CGColor]];
 	[textLayer setAlignmentMode:kCAAlignmentCenter];
