@@ -1522,7 +1522,7 @@
     }
 
     CALayer *superlayer = [hit superlayer];
-
+	
     // See if tap was on an annotation layer or marker label and send delegate protocol method
     if ([hit isKindOfClass:[RMMapLayer class]])
     {
@@ -1536,6 +1536,10 @@
     {
         [self tapOnLabelForAnnotation:[((RMMarker *)[superlayer superlayer]) annotation] atPoint:[recognizer locationInView:self]];
     }
+	else if ([hit isKindOfClass:[CATextLayer class]] && [superlayer isKindOfClass:[RMCircle class]])
+	{
+        [self tapOnLabelForAnnotation:[((RMMarker *)[hit superlayer]) annotation] atPoint:[recognizer locationInView:self]];
+	}
     else
     {
         [self singleTapAtPoint:[recognizer locationInView:self]];
